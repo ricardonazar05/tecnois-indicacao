@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indique e Ganhe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cor-primaria:#0787F0; --cor-secundaria:#FA770B;
+    --slate-950:#16232F; --slate-700:#3A4F63; --slate-600:#6B7A8D;
+    --surface-50:#F7FAFD; --surface-100:#EEF3F8; --surface-200:#DDE6EF;
+    --green:#1F9D6B;
+    --font-display:'Sora',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;background:var(--surface-50);color:var(--slate-950);font-family:var(--font-body);width:100%;overflow-x:hidden;}
+
+  .hero{position:relative;overflow:hidden;background:linear-gradient(150deg, var(--cor-primaria) 0%, var(--slate-950) 75%);
+    padding:34px 20px 30px;color:#fff;text-align:center;}
+  .hero .eyebrow{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.85;}
+  .hero h1{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,5vw,32px);margin:10px 0 8px;}
+  .hero p{opacity:.9;font-size:14.5px;max-width:520px;margin:0 auto;line-height:1.55;}
+  .hero .premio-tag{display:inline-block;margin-top:14px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.3);
+    border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600;}
+
+  .wrap{max-width:640px;margin:0 auto;padding:26px 18px 60px;}
+  .como-funciona{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
+  .cf-card{background:#fff;border:1px solid var(--surface-200);border-radius:14px;padding:18px 14px;text-align:center;}
+  .cf-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;
+    background:var(--cor-primaria);color:#fff;font-family:var(--font-display);font-weight:800;font-size:14px;margin-bottom:10px;}
+  .cf-icon{font-size:22px;margin-bottom:6px;}
+  .cf-title{font-family:var(--font-display);font-weight:800;font-size:13.5px;margin-bottom:4px;}
+  .cf-desc{font-size:12px;color:var(--slate-600);line-height:1.4;}
+  @media(max-width:560px){.como-funciona{grid-template-columns:1fr;}}
+
+  .trust-line{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;color:var(--slate-600);
+    margin-bottom:18px;text-align:center;}
+
+  .panel{background:#fff;border:1px solid var(--surface-200);border-radius:16px;box-shadow:0 8px 24px rgba(22,35,47,0.07);
+    padding:22px;margin-bottom:18px;}
+  .panel h2{font-family:var(--font-display);font-weight:800;font-size:16px;margin:0 0 4px;}
+  .panel .sub{font-size:12.5px;color:var(--slate-600);margin:0 0 16px;}
+
+  label{display:block;font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+    color:var(--slate-700);margin:14px 0 6px;}
+  label:first-of-type{margin-top:0;}
+  label .opt{color:var(--slate-600);font-weight:600;text-transform:none;letter-spacing:0;}
+  input[type=text]{width:100%;border:1.5px solid var(--surface-200);border-radius:8px;padding:11px 14px;font-size:14px;color:var(--slate-950);}
+  input[type=text]:focus{outline:none;border-color:var(--cor-primaria);}
+
+  .btn-primary{width:100%;margin-top:18px;background:var(--cor-secundaria);color:#fff;border:none;border-radius:999px;
+    font-family:var(--font-body);font-weight:700;font-size:15px;padding:15px 20px;cursor:pointer;}
+  .btn-whatsapp{width:100%;margin-top:10px;background:#25D366;color:#fff;border:none;border-radius:999px;
+    font-family:var(--font-body);font-weight:700;font-size:15px;padding:14px 20px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;}
+
+  .hidden{display:none !important;}
+
+  .link-box{background:var(--surface-100);border:1px solid var(--surface-200);border-radius:10px;padding:12px 14px;
+    font-family:var(--font-mono);font-size:12.5px;color:var(--cor-primaria);word-break:break-all;margin-bottom:6px;}
+  .icon-btn{border:1.5px solid var(--surface-200);background:#fff;border-radius:8px;font-family:var(--font-mono);font-size:11px;
+    font-weight:600;color:var(--slate-700);padding:8px 12px;cursor:pointer;margin-bottom:14px;}
+  .icon-btn.copied{background:var(--green);color:#fff;border-color:var(--green);}
+
+  .progress-label{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px;}
+  .progress-track{background:var(--surface-100);border-radius:999px;height:14px;overflow:hidden;}
+  .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg, var(--cor-secundaria), var(--cor-primaria));transition:width .4s;}
+  .tip{font-size:12px;color:var(--slate-600);margin-top:10px;line-height:1.5;}
+
+  .reward-box{background:linear-gradient(135deg, var(--green), #167a54);color:#fff;border-radius:14px;padding:20px;margin-top:16px;text-align:center;}
+  .reward-box h3{font-family:var(--font-display);font-weight:800;margin:0 0 6px;}
+  .reward-box p{font-size:13.5px;opacity:.95;margin:0;}
+
+  .footer{text-align:center;padding:24px 18px 40px;}
+  .footer .brand{font-family:var(--font-display);font-weight:800;color:rgba(22,35,47,0.4);letter-spacing:.06em;font-size:13px;}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="eyebrow" id="eyebrowTxt">Programa de Indicação</div>
+  <h1 id="tituloTxt">Indique e Ganhe</h1>
+  <p id="descTxt">Carregando...</p>
+  <div class="premio-tag" id="premioTag"></div>
+</div>
+
+<div class="wrap">
+
+  <div class="como-funciona">
+    <div class="cf-card">
+      <div class="cf-icon">🔗</div>
+      <div class="cf-title">1. Gere seu link</div>
+      <div class="cf-desc">Cadastro rápido, sem custo nenhum.</div>
+    </div>
+    <div class="cf-card">
+      <div class="cf-icon">📲</div>
+      <div class="cf-title">2. Compartilhe</div>
+      <div class="cf-desc">Manda pra quem você quiser, direto do WhatsApp.</div>
+    </div>
+    <div class="cf-card">
+      <div class="cf-icon">🎁</div>
+      <div class="cf-title">3. Ganhe seu prêmio</div>
+      <div class="cf-desc">Bateu a meta, a recompensa é sua.</div>
+    </div>
+  </div>
+
+  <div class="trust-line">✅ Sem custo · ✅ Sem compromisso · ✅ Só compartilhar</div>
+
+  <div class="panel" id="painelCadastro">
+    <h2>Comece agora</h2>
+    <p class="sub">Leva 20 segundos.</p>
+
+    <label>Seu nome <span class="opt">(opcional)</span></label>
+    <input type="text" id="nomeInput" placeholder="Como podemos te chamar">
+
+    <label>Seu WhatsApp <span class="opt">(obrigatório — é por ali que avisamos quando você ganhar)</span></label>
+    <input type="text" id="whatsInput" placeholder="(00) 00000-0000">
+
+    <button class="btn-primary" id="gerarBtn" onclick="gerarLink()">🔗 Gerar meu link de indicação</button>
+  </div>
+
+  <div class="panel hidden" id="painelLink">
+    <h2>Seu link único</h2>
+    <p class="sub">Compartilhe com quem você quiser — cada pessoa nova que clicar conta pra sua meta.</p>
+
+    <div class="link-box" id="linkTexto"></div>
+    <button class="icon-btn" onclick="copiarLink(event)">📋 Copiar link</button>
+
+    <a class="btn-whatsapp" id="whatsappShareBtn" href="#" target="_blank">📲 Compartilhar no WhatsApp</a>
+
+    <div style="margin-top:22px;">
+      <div class="progress-label">
+        <span id="progressoTexto">0 de 0 indicações</span>
+        <span id="progressoPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressoFill" style="width:0%;"></div></div>
+      <p class="tip">💡 Dica: nem todo mundo clica na hora — manda pra mais gente se quiser bater a meta mais rápido.</p>
+    </div>
+
+    <button class="icon-btn" style="width:100%;margin-top:14px;" onclick="atualizarProgresso()">🔄 Atualizar contador</button>
+
+    <div class="reward-box hidden" id="rewardBox">
+      <h3>🎉 Você bateu a meta!</h3>
+      <p id="rewardTexto"></p>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <div class="brand" id="brandFooter">TECNOIS</div>
+</div>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+const campanhaSlug = params.get('campanha') || 'tecnois';
+const refDaUrl = params.get('ref');
+
+let CAMPANHA = null;
+
+function getFingerprint(){
+  let fp = localStorage.getItem('fp_' + campanhaSlug);
+  if(!fp){
+    fp = 'fp_' + Math.random().toString(36).substring(2) + Date.now();
+    localStorage.setItem('fp_' + campanhaSlug, fp);
+  }
+  return fp;
+}
+
+async function carregarCampanha(){
+  try{
+    const resp = await fetch('/api/campanha?slug=' + campanhaSlug);
+    const data = await resp.json();
+    if(resp.ok){
+      CAMPANHA = data;
+      aplicarTema(data);
+    }
+  }catch(e){
+    console.error('Erro ao carregar campanha', e);
+  }
+}
+
+function aplicarTema(c){
+  document.documentElement.style.setProperty('--cor-primaria', c.cor_primaria || '#0787F0');
+  document.documentElement.style.setProperty('--cor-secundaria', c.cor_secundaria || '#FA770B');
+  document.getElementById('eyebrowTxt').textContent = 'Programa de Indicação · ' + c.nome_exibicao;
+  document.getElementById('tituloTxt').textContent = 'Indique, Multiplique Sua Autoridade e Ganhe';
+  document.getElementById('descTxt').textContent = 'Cada pessoa que confia em você e clica no seu link conta pra sua meta. Junte ' + c.meta_indicacoes + ' e o prêmio é seu — de graça, sem pegadinha.';
+  document.getElementById('premioTag').textContent = '🎁 ' + c.recompensa_descricao;
+  document.getElementById('brandFooter').textContent = c.nome_exibicao.toUpperCase();
+  document.title = 'Indique e Ganhe — ' + c.nome_exibicao;
+}
+
+async function gerarLink(){
+  const nome = document.getElementById('nomeInput').value.trim();
+  const whats = document.getElementById('whatsInput').value.trim();
+
+  if(!whats){
+    alert('Preencha seu WhatsApp — é por ali que avisamos quando você ganhar o prêmio.');
+    return;
+  }
+
+  const ownerFingerprint = getFingerprint();
+
+  try{
+    const resp = await fetch('/api/criar-participante', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ nome, whatsapp: whats, campanha: campanhaSlug, ownerFingerprint })
+    });
+    const data = await resp.json();
+    if(data.refCode){
+      localStorage.setItem('meu_ref_' + campanhaSlug, data.refCode);
+      mostrarLink(data.refCode);
+    } else {
+      alert('Erro: ' + (data.erro || 'não foi possível gerar seu link'));
+    }
+  }catch(e){
+    alert('Erro de conexão: ' + e.message);
+  }
+}
+
+function mostrarLink(refCode){
+  const link = window.location.origin + window.location.pathname + '?campanha=' + campanhaSlug + '&ref=' + refCode;
+  document.getElementById('linkTexto').textContent = link;
+  document.getElementById('painelCadastro').classList.add('hidden');
+  document.getElementById('painelLink').classList.remove('hidden');
+
+  const mensagem = encodeURIComponent('Oi! Dá uma olhada nisso, achei bem interessante: ' + link);
+  document.getElementById('whatsappShareBtn').href = 'https://wa.me/?text=' + mensagem;
+
+  atualizarProgresso();
+}
+
+function copiarLink(evt){
+  const texto = document.getElementById('linkTexto').textContent;
+  navigator.clipboard.writeText(texto).then(()=>{
+    const btn = evt.target;
+    const original = btn.textContent;
+    btn.textContent = '✅ Copiado';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = original; btn.classList.remove('copied'); }, 1600);
+  });
+}
+
+async function atualizarProgresso(){
+  const refCode = localStorage.getItem('meu_ref_' + campanhaSlug);
+  if(!refCode) return;
+
+  const resp = await fetch('/api/stats?refCode=' + refCode);
+  const data = await resp.json();
+  if(!resp.ok) return;
+
+  const pct = Math.min(100, Math.round((data.totalIndicacoes / data.metaIndicacoes) * 100));
+  document.getElementById('progressoTexto').textContent = data.totalIndicacoes + ' de ' + data.metaIndicacoes + ' indicações';
+  document.getElementById('progressoPct').textContent = pct + '%';
+  document.getElementById('progressoFill').style.width = pct + '%';
+
+  if(data.bateuMeta){
+    document.getElementById('rewardBox').classList.remove('hidden');
+    document.getElementById('rewardTexto').textContent = 'Em breve entraremos em contato pelo seu WhatsApp com os detalhes de "' + data.recompensaDescricao + '".';
+  }
+}
+
+async function registrarChegadaPorIndicacao(){
+  if(!refDaUrl) return;
+  await fetch('/api/track', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ refCode: refDaUrl, visitorFingerprint: getFingerprint() })
+  });
+}
+
+async function iniciar(){
+  await carregarCampanha();
+  await registrarChegadaPorIndicacao();
+
+  const jaTemCodigo = localStorage.getItem('meu_ref_' + campanhaSlug);
+  if(jaTemCodigo){
+    mostrarLink(jaTemCodigo);
+  }
+}
+
+iniciar();
+</script>
+</body>
+</html>
