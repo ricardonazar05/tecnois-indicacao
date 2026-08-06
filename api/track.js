@@ -18,12 +18,17 @@ module.exports = async (req, res) => {
 
   const { data: participante } = await supabase
     .from('participants')
-    .select('ref_code')
+    .select('ref_code, owner_fingerprint')
     .eq('ref_code', refCode)
     .single();
 
   if (!participante) {
     return res.status(404).json({ erro: 'Código de indicação inválido' });
+  }
+
+  // proteção contra auto-indicação: se quem está chegando é o próprio dono do link, não conta
+  if (participante.owner_fingerprint && participante.owner_fingerprint === visitorFingerprint) {
+    return res.status(200).json({ ok: true, contado: false, motivo: 'auto-indicacao-ignorada' });
   }
 
   const { error } = await supabase
@@ -38,5 +43,5 @@ module.exports = async (req, res) => {
     return res.status(500).json({ erro: 'Não foi possível registrar' });
   }
 
-  return res.status(200).json({ ok: true });
+  return res.status(200).json({ ok: true, contado: true });
 };
