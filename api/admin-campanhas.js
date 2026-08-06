@@ -30,7 +30,8 @@ module.exports = async (req, res) => {
   if (req.method === 'POST') {
     const {
       slug, nome_exibicao, recompensa_descricao, meta_indicacoes,
-      cupom_codigo, cor_primaria, cor_secundaria, ativo
+      cupom_codigo, cor_primaria, cor_secundaria, ativo,
+      arquivo_premio_url, destino_url, mensagem_compartilhamento
     } = req.body || {};
 
     if (!slug || !nome_exibicao || !recompensa_descricao) {
@@ -47,7 +48,10 @@ module.exports = async (req, res) => {
         cupom_codigo: cupom_codigo || null,
         cor_primaria: cor_primaria || '#0787F0',
         cor_secundaria: cor_secundaria || '#FA770B',
-        ativo: ativo !== undefined ? ativo : true
+        ativo: ativo !== undefined ? ativo : true,
+        arquivo_premio_url: arquivo_premio_url || null,
+        destino_url: destino_url || null,
+        mensagem_compartilhamento: mensagem_compartilhamento || null
       }, { onConflict: 'slug' })
       .select()
       .single();
