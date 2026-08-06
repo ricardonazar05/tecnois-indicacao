@@ -223,13 +223,22 @@ async function gerarLink(){
 }
 
 function mostrarLink(refCode){
-  const link = window.location.origin + window.location.pathname + '?campanha=' + campanhaSlug + '&ref=' + refCode;
+  // se a campanha tem um destino externo (ex: loja da Lacoque), o link
+  // passa pelo redirecionador — senão, fica na nossa própria página
+  const temDestinoExterno = CAMPANHA && CAMPANHA.destino_url;
+  const link = temDestinoExterno
+    ? window.location.origin + '/api/ir?ref=' + refCode
+    : window.location.origin + window.location.pathname + '?campanha=' + campanhaSlug + '&ref=' + refCode;
+
   document.getElementById('linkTexto').textContent = link;
   document.getElementById('painelCadastro').classList.add('hidden');
   document.getElementById('painelLink').classList.remove('hidden');
 
-  const mensagem = encodeURIComponent('Oi! Dá uma olhada nisso, achei bem interessante: ' + link);
-  document.getElementById('whatsappShareBtn').href = 'https://wa.me/?text=' + mensagem;
+  const template = (CAMPANHA && CAMPANHA.mensagem_compartilhamento)
+    ? CAMPANHA.mensagem_compartilhamento
+    : 'Oi! Dá uma olhada nisso, achei bem interessante: {link}';
+  const textoMensagem = template.replace('{link}', link);
+  document.getElementById('whatsappShareBtn').href = 'https://wa.me/?text=' + encodeURIComponent(textoMensagem);
 
   atualizarProgresso();
 }
