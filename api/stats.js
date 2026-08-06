@@ -6,42 +6,74 @@ const supabase = createClient(
 );
 
 module.exports = async (req, res) => {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ erro: 'Método não permitido' });
+  const { refCode } = req.query;
+
+  if (!refCode) {
+    return res.status(400).json({ erro: 'Faltou o refCode' });
   }
 
-  const { refCode, visitorFingerprint } = req.body || {};
-
-  if (!refCode || !visitorFingerprint) {
-    return res.status(400).json({ erro: 'Faltam dados' });
-  }
-
-  const { data: participante } = await supabase
+  // busca o participante (agora inclui se o prêmio já foi notificado)
+  const { data: participante, error: erroParticipante } = await supabase
     .from('participants')
-    .select('ref_code, owner_fingerprint')
+    .select('campaign_slug, nome, whatsapp, premio_notificado')
     .eq('ref_code', refCode)
     .single();
 
-  if (!participante) {
-    return res.status(404).json({ erro: 'Código de indicação inválido' });
+  if (erroParticipante || !participante) {
+    return res.status(404).json({ erro: 'Código de indicação não encontrado' });
   }
 
-  // proteção contra auto-indicação: se quem está chegando é o próprio dono do link, não conta
-  if (participante.owner_fingerprint && participante.owner_fingerprint === visitorFingerprint) {
-    return res.status(200).json({ ok: true, contado: false, motivo: 'auto-indicacao-ignorada' });
-  }
-
-  const { error } = await supabase
+  const { count, error } = await supabase
     .from('referral_visits')
-    .upsert(
-      { ref_code: refCode, visitor_fingerprint: visitorFingerprint, completou_quiz: true },
-      { onConflict: 'ref_code,visitor_fingerprint', ignoreDuplicates: true }
-    );
+    .select('*', { count: 'exact', head: true })
+    .eq('ref_code', refCode)
+    .eq('completou_quiz', true);
 
   if (error) {
     console.error(error);
-    return res.status(500).json({ erro: 'Não foi possível registrar' });
+    return res.status(500).json({ erro: 'Não foi possível consultar' });
   }
 
-  return res.status(200).json({ ok: true, contado: true });
+  const { data: campanha } = await supabase
+    .from('campaigns')
+    .select('nome_exibicao, recompensa_descricao, meta_indicacoes, cupom_codigo')
+    .eq('slug', participante.campaign_slug)
+    .single();
+
+  const meta = campanha?.meta_indicacoes ?? 3;
+  const bateuMeta = count >= meta;
+
+  // se bateu a meta AGORA pela primeira vez, avisa a planilha e marca como notificado
+  if (bateuMeta && !participante.premio_notificado && process.env.GOOGLE_SHEETS_WEBHOOK_URL) {
+    try {
+      await fetch(process.env.GOOGLE_SHEETS_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nome: participante.nome,
+          whatsapp: participante.whatsapp,
+          campanha: campanha?.nome_exibicao,
+          totalIndicacoes: count,
+          recompensa: campanha?.recompensa_descricao
+        })
+      });
+
+      await supabase
+        .from('participants')
+        .update({ premio_notificado: true })
+        .eq('ref_code', refCode);
+    } catch (e) {
+      // se a planilha falhar, não quebra a resposta pro usuário — só loga o erro
+      console.error('Falha ao notificar planilha:', e.message);
+    }
+  }
+
+  return res.status(200).json({
+    refCode,
+    totalIndicacoes: count,
+    metaIndicacoes: meta,
+    recompensaDescricao: campanha?.recompensa_descricao ?? '',
+    bateuMeta,
+    cupomCodigo: bateuMeta ? (campanha?.cupom_codigo ?? null) : null
+  });
 };
