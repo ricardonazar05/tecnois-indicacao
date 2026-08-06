@@ -26,7 +26,7 @@
   .btn.secundario{background:var(--blue);}
   .erro-msg{color:#DD4B39;font-size:12.5px;margin-top:8px;}
 
-  .app{display:none;max-width:900px;margin:0 auto;padding:30px 18px 60px;}
+  .app{display:none;}
   .app.ativo{display:block;}
   .topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
   .topo h1{font-family:var(--font-display);font-weight:800;font-size:22px;margin:0;}
@@ -53,6 +53,14 @@
   .status-msg{font-size:13px;margin-top:10px;}
   .status-msg.ok{color:var(--green);}
   .status-msg.erro{color:#DD4B39;}
+
+  .admin-nav{background:var(--slate-950);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .admin-nav-brand{font-family:var(--font-display);font-weight:800;color:#fff;font-size:15px;}
+  .admin-nav-links{display:flex;gap:8px;}
+  .admin-nav-link{font-family:var(--font-mono);font-size:12px;font-weight:600;color:rgba(247,250,253,0.7);text-decoration:none;
+    padding:8px 14px;border-radius:8px;transition:background .15s,color .15s;}
+  .admin-nav-link:hover{background:rgba(255,255,255,0.08);color:#fff;}
+  .admin-nav-link.ativo{background:var(--orange);color:#fff;}
 </style>
 </head>
 <body>
@@ -68,6 +76,15 @@
 </div>
 
 <div class="app" id="app">
+  <div class="admin-nav">
+    <div class="admin-nav-brand">⚙️ TecNois Admin</div>
+    <div class="admin-nav-links">
+      <a href="/admin.html" class="admin-nav-link">📊 Ranking</a>
+      <a href="/admin-config.html" class="admin-nav-link ativo">⚙️ Configurar Campanhas</a>
+    </div>
+  </div>
+
+  <div style="max-width:900px;margin:0 auto;padding:30px 18px 60px;">
   <div class="topo">
     <h1>⚙️ Configurar Campanhas</h1>
     <button class="btn secundario" onclick="novaCampanha()">+ Nova campanha</button>
@@ -98,6 +115,15 @@
       </div>
     </div>
 
+    <label>Link do arquivo do prêmio <span style="font-weight:600;text-transform:none;">(opcional — link de download do PDF/arquivo)</span></label>
+    <input type="text" id="fArquivoPremio" placeholder="ex: link do Google Drive ou onde o arquivo estiver hospedado">
+
+    <label>Destino do link de indicação <span style="font-weight:600;text-transform:none;">(opcional — se preenchido, o link leva pra esse site em vez de ficar na nossa página)</span></label>
+    <input type="text" id="fDestinoUrl" placeholder="ex: https://www.lacoquemaiscachos.com.br/">
+
+    <label>Mensagem de compartilhamento no WhatsApp <span style="font-weight:600;text-transform:none;">(use {link} onde o link deve entrar)</span></label>
+    <input type="text" id="fMensagem" placeholder="ex: Oi! Dá uma olhada nisso: {link}">
+
     <label>Cores da campanha</label>
     <div class="cores-row">
       <div class="cor-grupo">
@@ -120,6 +146,7 @@
       <button class="btn secundario" onclick="verPreview()">👁️ Ver página</button>
     </div>
     <div class="status-msg" id="statusMsg"></div>
+  </div>
   </div>
 </div>
 
@@ -183,6 +210,9 @@ function novaCampanha(){
   document.getElementById('fRecompensa').value = '';
   document.getElementById('fMeta').value = 3;
   document.getElementById('fCupom').value = '';
+  document.getElementById('fArquivoPremio').value = '';
+  document.getElementById('fDestinoUrl').value = '';
+  document.getElementById('fMensagem').value = '';
   document.getElementById('fCorPrimaria').value = '#0787F0';
   document.getElementById('fCorSecundaria').value = '#FA770B';
   document.getElementById('fAtivo').checked = true;
@@ -200,6 +230,9 @@ function editarCampanha(slug){
   document.getElementById('fRecompensa').value = c.recompensa_descricao;
   document.getElementById('fMeta').value = c.meta_indicacoes;
   document.getElementById('fCupom').value = c.cupom_codigo || '';
+  document.getElementById('fArquivoPremio').value = c.arquivo_premio_url || '';
+  document.getElementById('fDestinoUrl').value = c.destino_url || '';
+  document.getElementById('fMensagem').value = c.mensagem_compartilhamento || '';
   document.getElementById('fCorPrimaria').value = c.cor_primaria;
   document.getElementById('fCorSecundaria').value = c.cor_secundaria;
   document.getElementById('fAtivo').checked = c.ativo;
@@ -224,6 +257,9 @@ async function salvarCampanha(){
     recompensa_descricao: recompensa,
     meta_indicacoes: parseInt(document.getElementById('fMeta').value) || 3,
     cupom_codigo: document.getElementById('fCupom').value.trim() || null,
+    arquivo_premio_url: document.getElementById('fArquivoPremio').value.trim() || null,
+    destino_url: document.getElementById('fDestinoUrl').value.trim() || null,
+    mensagem_compartilhamento: document.getElementById('fMensagem').value.trim() || null,
     cor_primaria: document.getElementById('fCorPrimaria').value,
     cor_secundaria: document.getElementById('fCorSecundaria').value,
     ativo: document.getElementById('fAtivo').checked
