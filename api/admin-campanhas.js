@@ -32,7 +32,9 @@ module.exports = async (req, res) => {
       slug, nome_exibicao, recompensa_descricao, meta_indicacoes,
       cupom_codigo, cor_primaria, cor_secundaria, ativo,
       arquivo_premio_url, destino_url, mensagem_compartilhamento,
-      autoridade_nome, autoridade_foto_url, autoridade_frase
+      autoridade_nome, autoridade_foto_url, autoridade_frase, autoridade_selo,
+      autoridade_stat1_valor, autoridade_stat1_label,
+      autoridade_stat2_valor, autoridade_stat2_label
     } = req.body || {};
 
     if (!slug || !nome_exibicao || !recompensa_descricao) {
@@ -55,7 +57,12 @@ module.exports = async (req, res) => {
         mensagem_compartilhamento: mensagem_compartilhamento || null,
         autoridade_nome: autoridade_nome || null,
         autoridade_foto_url: autoridade_foto_url || null,
-        autoridade_frase: autoridade_frase || null
+        autoridade_frase: autoridade_frase || null,
+        autoridade_selo: autoridade_selo || null,
+        autoridade_stat1_valor: autoridade_stat1_valor || null,
+        autoridade_stat1_label: autoridade_stat1_label || null,
+        autoridade_stat2_valor: autoridade_stat2_valor || null,
+        autoridade_stat2_label: autoridade_stat2_label || null
       }, { onConflict: 'slug' })
       .select()
       .single();

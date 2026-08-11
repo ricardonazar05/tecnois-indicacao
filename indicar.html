@@ -44,15 +44,33 @@
 
   .wrap{max-width:640px;margin:0 auto;padding:8px 18px 60px;}
 
-  .autoridade{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--linha);border-radius:20px;
-    padding:16px 20px;margin:-44px 0 22px;box-shadow:var(--sombra-card);position:relative;z-index:2;}
-  .autoridade-foto{width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;border:3px solid var(--cor-clara);}
-  .autoridade-texto{min-width:0;}
+  .autoridade{display:flex;align-items:center;gap:20px;background:#fff;border:1px solid var(--linha);border-radius:24px;
+    padding:22px 22px 22px 18px;margin:-48px 0 22px;box-shadow:var(--sombra-card);position:relative;z-index:2;}
+  .autoridade-fotobox{position:relative;flex-shrink:0;width:104px;height:104px;}
+  .autoridade-foto-clip{width:100%;height:100%;overflow:hidden;
+    border-radius:63% 37% 54% 46% / 55% 48% 52% 45%;
+    box-shadow:0 10px 22px color-mix(in srgb, var(--cor-primaria) 32%, transparent 68%);}
+  .autoridade-foto-clip img{width:100%;height:100%;object-fit:cover;display:block;}
+  .autoridade-selo{position:absolute;right:-16px;bottom:-16px;width:58px;height:58px;}
+  .autoridade-selo svg{width:100%;height:100%;fill:var(--cor-primaria);transform-origin:50% 50%;animation:girarSelo 18s linear infinite;}
+  .autoridade-selo-dot{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:24px;height:24px;
+    border-radius:50%;background:var(--cor-secundaria);color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:12px;box-shadow:0 3px 10px color-mix(in srgb, var(--cor-secundaria) 45%, transparent 55%);}
+  @keyframes girarSelo{to{transform:rotate(360deg);}}
+  .autoridade-info{min-width:0;flex:1;}
   .autoridade-tag{display:block;font-family:var(--font);font-size:10.5px;font-weight:700;letter-spacing:.08em;
     text-transform:uppercase;color:var(--cor-primaria);margin-bottom:2px;}
-  .autoridade-texto strong{display:block;font-size:15px;font-weight:800;color:var(--tinta);}
-  .autoridade-texto p{margin:3px 0 0;font-size:12.5px;color:var(--tinta-suave);line-height:1.4;font-style:italic;}
-  @media(max-width:420px){.autoridade{flex-direction:column;text-align:center;margin-top:-36px;}}
+  .autoridade-info strong{display:block;font-size:15.5px;font-weight:800;color:var(--tinta);}
+  .autoridade-info p{margin:3px 0 0;font-size:12.5px;color:var(--tinta-suave);line-height:1.4;font-style:italic;}
+  .autoridade-stats{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;}
+  .autoridade-stat{background:var(--cor-clara);border-radius:12px;padding:6px 14px;text-align:center;}
+  .autoridade-stat-num{display:block;font-family:var(--font);font-weight:800;font-size:17px;color:var(--cor-primaria);}
+  .autoridade-stat-num::after{content:'+';}
+  .autoridade-stat-label{display:block;font-size:9px;color:var(--tinta-suave);text-transform:uppercase;letter-spacing:.04em;font-weight:600;}
+  @media(max-width:460px){
+    .autoridade{flex-direction:column;text-align:center;margin-top:-40px;padding:24px 20px 20px;}
+    .autoridade-stats{justify-content:center;}
+  }
 
   .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease;}
   .reveal.in-view{opacity:1;transform:translateY(0);}
@@ -150,12 +168,35 @@
 
 <div class="wrap">
 
-  <div class="autoridade hidden" id="autoridadeBox">
-    <img class="autoridade-foto" id="autoridadeFoto" alt="">
-    <div class="autoridade-texto">
+  <div class="autoridade reveal hidden" id="autoridadeBox">
+    <div class="autoridade-fotobox">
+      <div class="autoridade-foto-clip">
+        <img id="autoridadeFoto" alt="">
+      </div>
+      <div class="autoridade-selo hidden" id="autoridadeSeloWrap">
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M 50,50 m -38,0 a 38,38 0 1,1 76,0 a 38,38 0 1,1 -76,0" fill="none" id="seloPath"></path>
+          <text font-size="9.5" font-weight="800" letter-spacing="1.2">
+            <textPath href="#seloPath" id="seloTextPath" startoffset="0%"></textPath>
+          </text>
+        </svg>
+        <span class="autoridade-selo-dot">★</span>
+      </div>
+    </div>
+    <div class="autoridade-info">
       <span class="autoridade-tag">Quem está por trás</span>
       <strong id="autoridadeNome"></strong>
       <p id="autoridadeFrase"></p>
+      <div class="autoridade-stats" id="autoridadeStats">
+        <div class="autoridade-stat hidden" id="stat1">
+          <span class="autoridade-stat-num" id="stat1Num">0</span>
+          <span class="autoridade-stat-label" id="stat1Label"></span>
+        </div>
+        <div class="autoridade-stat hidden" id="stat2">
+          <span class="autoridade-stat-num" id="stat2Num">0</span>
+          <span class="autoridade-stat-label" id="stat2Label"></span>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -274,8 +315,46 @@ function aplicarTema(c){
     const fraseEl = document.getElementById('autoridadeFrase');
     fraseEl.textContent = c.autoridade_frase || '';
     fraseEl.style.display = c.autoridade_frase ? '' : 'none';
+
+    const seloWrap = document.getElementById('autoridadeSeloWrap');
+    if(c.autoridade_selo){
+      document.getElementById('seloTextPath').textContent = (c.autoridade_selo + ' • ').repeat(4);
+      seloWrap.classList.remove('hidden');
+    } else {
+      seloWrap.classList.add('hidden');
+    }
+
+    configurarStat('stat1', c.autoridade_stat1_valor, c.autoridade_stat1_label);
+    configurarStat('stat2', c.autoridade_stat2_valor, c.autoridade_stat2_label);
+
     autoridadeBox.classList.remove('hidden');
   }
+}
+
+function configurarStat(id, valor, label){
+  const box = document.getElementById(id);
+  if(valor && label){
+    document.getElementById(id + 'Label').textContent = label;
+    box.dataset.alvo = parseInt(valor) || 0;
+    box.classList.remove('hidden');
+  } else {
+    box.classList.add('hidden');
+  }
+}
+
+function animarContadores(container){
+  container.querySelectorAll('.autoridade-stat:not(.hidden)').forEach(box => {
+    const alvo = parseInt(box.dataset.alvo) || 0;
+    const numEl = box.querySelector('.autoridade-stat-num');
+    const duracao = 900;
+    const inicio = performance.now();
+    function passo(agora){
+      const t = Math.min(1, (agora - inicio) / duracao);
+      numEl.textContent = Math.round(alvo * t);
+      if(t < 1) requestAnimationFrame(passo);
+    }
+    requestAnimationFrame(passo);
+  });
 }
 
 function iniciarReveal(){
@@ -284,6 +363,7 @@ function iniciarReveal(){
     entries.forEach(entry => {
       if(entry.isIntersecting){
         entry.target.classList.add('in-view');
+        if(entry.target.id === 'autoridadeBox') animarContadores(entry.target);
         obs.unobserve(entry.target);
       }
     });

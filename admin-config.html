@@ -159,6 +159,15 @@
       <input type="text" id="fAutoridadeFoto" placeholder="ex: /assets/campanhas/lacoque-carla.jpg">
     </div>
     <input type="text" id="fAutoridadeFrase" placeholder="Frase curta (opcional) — ex: Recompensa entregue por mim mesma" style="margin-top:10px;">
+    <input type="text" id="fAutoridadeSelo" placeholder="Selo que gira ao redor da foto (opcional) — ex: CRIADORA DO MÉTODO" style="margin-top:10px;">
+    <div class="row2" style="margin-top:10px;">
+      <input type="text" id="fAutoridadeStat1Valor" placeholder="Número 1 (opcional) — ex: 25">
+      <input type="text" id="fAutoridadeStat1Label" placeholder="Legenda 1 — ex: Anos de experiência">
+    </div>
+    <div class="row2" style="margin-top:10px;">
+      <input type="text" id="fAutoridadeStat2Valor" placeholder="Número 2 (opcional) — ex: 4000">
+      <input type="text" id="fAutoridadeStat2Label" placeholder="Legenda 2 — ex: Alunas formadas">
+    </div>
 
     <label>Cores da campanha</label>
     <div class="cores-row">
@@ -336,6 +345,11 @@ function novaCampanha(){
   document.getElementById('fAutoridadeNome').value = '';
   document.getElementById('fAutoridadeFoto').value = '';
   document.getElementById('fAutoridadeFrase').value = '';
+  document.getElementById('fAutoridadeSelo').value = '';
+  document.getElementById('fAutoridadeStat1Valor').value = '';
+  document.getElementById('fAutoridadeStat1Label').value = '';
+  document.getElementById('fAutoridadeStat2Valor').value = '';
+  document.getElementById('fAutoridadeStat2Label').value = '';
   document.getElementById('fCorPrimaria').value = '#0787F0';
   document.getElementById('fCorSecundaria').value = '#FA770B';
   document.getElementById('fAtivo').checked = true;
@@ -359,6 +373,11 @@ function editarCampanha(slug){
   document.getElementById('fAutoridadeNome').value = c.autoridade_nome || '';
   document.getElementById('fAutoridadeFoto').value = c.autoridade_foto_url || '';
   document.getElementById('fAutoridadeFrase').value = c.autoridade_frase || '';
+  document.getElementById('fAutoridadeSelo').value = c.autoridade_selo || '';
+  document.getElementById('fAutoridadeStat1Valor').value = c.autoridade_stat1_valor || '';
+  document.getElementById('fAutoridadeStat1Label').value = c.autoridade_stat1_label || '';
+  document.getElementById('fAutoridadeStat2Valor').value = c.autoridade_stat2_valor || '';
+  document.getElementById('fAutoridadeStat2Label').value = c.autoridade_stat2_label || '';
   document.getElementById('fCorPrimaria').value = c.cor_primaria;
   document.getElementById('fCorSecundaria').value = c.cor_secundaria;
   document.getElementById('fAtivo').checked = c.ativo;
@@ -391,6 +410,11 @@ async function salvarCampanha(){
     autoridade_nome: document.getElementById('fAutoridadeNome').value.trim() || null,
     autoridade_foto_url: document.getElementById('fAutoridadeFoto').value.trim() || null,
     autoridade_frase: document.getElementById('fAutoridadeFrase').value.trim() || null,
+    autoridade_selo: document.getElementById('fAutoridadeSelo').value.trim() || null,
+    autoridade_stat1_valor: document.getElementById('fAutoridadeStat1Valor').value.trim() || null,
+    autoridade_stat1_label: document.getElementById('fAutoridadeStat1Label').value.trim() || null,
+    autoridade_stat2_valor: document.getElementById('fAutoridadeStat2Valor').value.trim() || null,
+    autoridade_stat2_label: document.getElementById('fAutoridadeStat2Label').value.trim() || null,
     cor_primaria: document.getElementById('fCorPrimaria').value,
     cor_secundaria: document.getElementById('fCorSecundaria').value,
     ativo: document.getElementById('fAtivo').checked
