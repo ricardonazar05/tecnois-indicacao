@@ -153,6 +153,13 @@
     <label>Mensagem de compartilhamento no WhatsApp <span style="font-weight:600;text-transform:none;">(use {link} onde o link deve entrar)</span></label>
     <input type="text" id="fMensagem" placeholder="ex: Oi! Dá uma olhada nisso: {link}">
 
+    <label>Rosto por trás da campanha <span style="font-weight:600;text-transform:none;">(opcional — mostra uma seção de confiança na página pública com foto e nome de quem está por trás do prêmio)</span></label>
+    <div class="row2">
+      <input type="text" id="fAutoridadeNome" placeholder="ex: Carla LaCoque">
+      <input type="text" id="fAutoridadeFoto" placeholder="ex: /assets/campanhas/lacoque-carla.jpg">
+    </div>
+    <input type="text" id="fAutoridadeFrase" placeholder="Frase curta (opcional) — ex: Recompensa entregue por mim mesma" style="margin-top:10px;">
+
     <label>Cores da campanha</label>
     <div class="cores-row">
       <div class="cor-grupo">
@@ -326,6 +333,9 @@ function novaCampanha(){
   document.getElementById('fArquivoPremio').value = '';
   document.getElementById('fDestinoUrl').value = '';
   document.getElementById('fMensagem').value = '';
+  document.getElementById('fAutoridadeNome').value = '';
+  document.getElementById('fAutoridadeFoto').value = '';
+  document.getElementById('fAutoridadeFrase').value = '';
   document.getElementById('fCorPrimaria').value = '#0787F0';
   document.getElementById('fCorSecundaria').value = '#FA770B';
   document.getElementById('fAtivo').checked = true;
@@ -346,6 +356,9 @@ function editarCampanha(slug){
   document.getElementById('fArquivoPremio').value = c.arquivo_premio_url || '';
   document.getElementById('fDestinoUrl').value = c.destino_url || '';
   document.getElementById('fMensagem').value = c.mensagem_compartilhamento || '';
+  document.getElementById('fAutoridadeNome').value = c.autoridade_nome || '';
+  document.getElementById('fAutoridadeFoto').value = c.autoridade_foto_url || '';
+  document.getElementById('fAutoridadeFrase').value = c.autoridade_frase || '';
   document.getElementById('fCorPrimaria').value = c.cor_primaria;
   document.getElementById('fCorSecundaria').value = c.cor_secundaria;
   document.getElementById('fAtivo').checked = c.ativo;
@@ -375,6 +388,9 @@ async function salvarCampanha(){
     arquivo_premio_url: document.getElementById('fArquivoPremio').value.trim() || null,
     destino_url: document.getElementById('fDestinoUrl').value.trim() || null,
     mensagem_compartilhamento: document.getElementById('fMensagem').value.trim() || null,
+    autoridade_nome: document.getElementById('fAutoridadeNome').value.trim() || null,
+    autoridade_foto_url: document.getElementById('fAutoridadeFoto').value.trim() || null,
+    autoridade_frase: document.getElementById('fAutoridadeFrase').value.trim() || null,
     cor_primaria: document.getElementById('fCorPrimaria').value,
     cor_secundaria: document.getElementById('fCorSecundaria').value,
     ativo: document.getElementById('fAtivo').checked

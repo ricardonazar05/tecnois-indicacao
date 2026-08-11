@@ -43,6 +43,20 @@
   .hero-wave{position:absolute;left:0;bottom:-1px;width:100%;height:52px;display:block;fill:var(--cor-creme);}
 
   .wrap{max-width:640px;margin:0 auto;padding:8px 18px 60px;}
+
+  .autoridade{display:flex;align-items:center;gap:16px;background:#fff;border:1px solid var(--linha);border-radius:20px;
+    padding:16px 20px;margin:-44px 0 22px;box-shadow:var(--sombra-card);position:relative;z-index:2;}
+  .autoridade-foto{width:64px;height:64px;border-radius:50%;object-fit:cover;flex-shrink:0;border:3px solid var(--cor-clara);}
+  .autoridade-texto{min-width:0;}
+  .autoridade-tag{display:block;font-family:var(--font);font-size:10.5px;font-weight:700;letter-spacing:.08em;
+    text-transform:uppercase;color:var(--cor-primaria);margin-bottom:2px;}
+  .autoridade-texto strong{display:block;font-size:15px;font-weight:800;color:var(--tinta);}
+  .autoridade-texto p{margin:3px 0 0;font-size:12.5px;color:var(--tinta-suave);line-height:1.4;font-style:italic;}
+  @media(max-width:420px){.autoridade{flex-direction:column;text-align:center;margin-top:-36px;}}
+
+  .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s ease,transform .6s ease;}
+  .reveal.in-view{opacity:1;transform:translateY(0);}
+
   .como-funciona{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
   .cf-card{background:#fff;border:1px solid var(--linha);border-radius:18px;padding:22px 16px;text-align:center;
     box-shadow:var(--sombra-card);transition:transform .2s,box-shadow .2s;}
@@ -136,20 +150,29 @@
 
 <div class="wrap">
 
+  <div class="autoridade hidden" id="autoridadeBox">
+    <img class="autoridade-foto" id="autoridadeFoto" alt="">
+    <div class="autoridade-texto">
+      <span class="autoridade-tag">Quem está por trás</span>
+      <strong id="autoridadeNome"></strong>
+      <p id="autoridadeFrase"></p>
+    </div>
+  </div>
+
   <div class="como-funciona">
-    <div class="cf-card">
+    <div class="cf-card reveal">
       <div class="cf-num">1</div>
       <div class="cf-icon">🔗</div>
       <div class="cf-title">Gere seu link</div>
       <div class="cf-desc">Cadastro rápido, sem custo nenhum.</div>
     </div>
-    <div class="cf-card">
+    <div class="cf-card reveal">
       <div class="cf-num">2</div>
       <div class="cf-icon">📲</div>
       <div class="cf-title">Compartilhe</div>
       <div class="cf-desc">Manda pra quem você quiser, direto do WhatsApp.</div>
     </div>
-    <div class="cf-card">
+    <div class="cf-card reveal">
       <div class="cf-num">3</div>
       <div class="cf-icon">🎁</div>
       <div class="cf-title">Ganhe seu prêmio</div>
@@ -159,7 +182,7 @@
 
   <div class="trust-line"><span>✓</span> Sem custo &nbsp; <span>✓</span> Sem compromisso &nbsp; <span>✓</span> Só compartilhar</div>
 
-  <div class="panel" id="painelCadastro">
+  <div class="panel reveal" id="painelCadastro">
     <h2>Comece agora</h2>
     <p class="sub">Leva 20 segundos.</p>
 
@@ -242,6 +265,30 @@ function aplicarTema(c){
   document.getElementById('premioTag').textContent = '🎁 ' + c.recompensa_descricao;
   document.getElementById('brandFooter').textContent = c.nome_exibicao.toUpperCase();
   document.title = 'Indique e Ganhe — ' + c.nome_exibicao;
+
+  const autoridadeBox = document.getElementById('autoridadeBox');
+  if(c.autoridade_nome && c.autoridade_foto_url){
+    document.getElementById('autoridadeFoto').src = c.autoridade_foto_url;
+    document.getElementById('autoridadeFoto').alt = c.autoridade_nome;
+    document.getElementById('autoridadeNome').textContent = c.autoridade_nome;
+    const fraseEl = document.getElementById('autoridadeFrase');
+    fraseEl.textContent = c.autoridade_frase || '';
+    fraseEl.style.display = c.autoridade_frase ? '' : 'none';
+    autoridadeBox.classList.remove('hidden');
+  }
+}
+
+function iniciarReveal(){
+  const els = document.querySelectorAll('.reveal');
+  const obs = new IntersectionObserver((entries)=>{
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.classList.add('in-view');
+        obs.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+  els.forEach(el => obs.observe(el));
 }
 
 async function gerarLink(){
@@ -336,6 +383,7 @@ async function registrarChegadaPorIndicacao(){
 async function iniciar(){
   await carregarCampanha();
   await registrarChegadaPorIndicacao();
+  iniciarReveal();
 
   const jaTemCodigo = localStorage.getItem('meu_ref_' + campanhaSlug);
   if(jaTemCodigo){

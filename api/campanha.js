@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
 
   const { data, error } = await supabase
     .from('campaigns')
-    .select('slug, nome_exibicao, recompensa_descricao, meta_indicacoes, cor_primaria, cor_secundaria, destino_url, mensagem_compartilhamento, arquivo_premio_url')
+    .select('slug, nome_exibicao, recompensa_descricao, meta_indicacoes, cor_primaria, cor_secundaria, destino_url, mensagem_compartilhamento, arquivo_premio_url, autoridade_nome, autoridade_foto_url, autoridade_frase')
     .eq('slug', slug)
     .eq('ativo', true)
     .single();
