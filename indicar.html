@@ -5,108 +5,159 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indique e Ganhe</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Sora:wght@700;800;900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Raleway:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
   :root{
+    /* a campanha define só 2 cores (vindas do banco) — o resto da paleta é derivado
+       delas via color-mix, então qualquer campanha nova já nasce com hierarquia rica */
     --cor-primaria:#0787F0; --cor-secundaria:#FA770B;
-    --slate-950:#16232F; --slate-700:#3A4F63; --slate-600:#6B7A8D;
-    --surface-50:#F7FAFD; --surface-100:#EEF3F8; --surface-200:#DDE6EF;
+    --cor-escura: color-mix(in srgb, var(--cor-primaria) 45%, #1b1210 55%);
+    --cor-creme: color-mix(in srgb, var(--cor-primaria) 4%, #fffaf6 96%);
+    --cor-clara: color-mix(in srgb, var(--cor-primaria) 11%, #ffffff 89%);
+    --cor-clara-2: color-mix(in srgb, var(--cor-secundaria) 13%, #ffffff 87%);
+    --linha: color-mix(in srgb, var(--cor-primaria) 16%, #ffffff 84%);
+    --sombra-card: 0 1px 2px rgba(20,10,8,0.04), 0 16px 32px color-mix(in srgb, var(--cor-primaria) 14%, transparent 86%);
+    --tinta:#2a1a17; --tinta-suave:#83706a;
     --green:#1F9D6B;
-    --font-display:'Sora',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+    --font:'Raleway',sans-serif;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;background:var(--surface-50);color:var(--slate-950);font-family:var(--font-body);width:100%;overflow-x:hidden;}
+  html,body{margin:0;padding:0;background:var(--cor-creme);color:var(--tinta);font-family:var(--font);width:100%;overflow-x:hidden;}
 
-  .hero{position:relative;overflow:hidden;background:linear-gradient(150deg, var(--cor-primaria) 0%, var(--slate-950) 75%);
-    padding:34px 20px 30px;color:#fff;text-align:center;}
-  .hero .eyebrow{font-family:var(--font-mono);font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;opacity:.85;}
-  .hero h1{font-family:var(--font-display);font-weight:800;font-size:clamp(24px,5vw,32px);margin:10px 0 8px;}
-  .hero p{opacity:.9;font-size:14.5px;max-width:520px;margin:0 auto;line-height:1.55;}
-  .hero .premio-tag{display:inline-block;margin-top:14px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.3);
-    border-radius:999px;padding:8px 18px;font-size:13px;font-weight:600;}
+  .hero{
+    position:relative;overflow:hidden;
+    background:
+      radial-gradient(130% 150% at 12% -15%, color-mix(in srgb, var(--cor-secundaria) 55%, transparent) 0%, transparent 55%),
+      linear-gradient(155deg, var(--cor-primaria) 0%, var(--cor-secundaria) 48%, var(--cor-escura) 100%);
+    padding:46px 20px 84px;color:#fff;text-align:center;
+  }
+  .hero-motif{position:absolute;pointer-events:none;opacity:.16;color:#fff;}
+  .hero-motif.canto{width:210px;height:210px;top:-40px;right:-50px;}
+  .hero-motif.fio{width:280px;height:130px;bottom:6px;left:-30px;opacity:.14;}
+  .hero-inner{position:relative;z-index:1;}
+  .hero .eyebrow{font-family:var(--font);font-size:11.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;opacity:.9;}
+  .hero h1{font-family:var(--font);font-weight:800;font-size:clamp(25px,5.4vw,34px);line-height:1.1;margin:12px 0 10px;letter-spacing:-.01em;}
+  .hero p{opacity:.94;font-size:14.5px;max-width:520px;margin:0 auto;line-height:1.6;font-weight:400;}
+  .hero .premio-tag{display:inline-block;margin-top:16px;background:rgba(255,255,255,0.16);border:1px solid rgba(255,255,255,0.32);
+    border-radius:999px;padding:9px 20px;font-size:13px;font-weight:600;backdrop-filter:blur(2px);}
+  .hero-wave{position:absolute;left:0;bottom:-1px;width:100%;height:52px;display:block;fill:var(--cor-creme);}
 
-  .wrap{max-width:640px;margin:0 auto;padding:26px 18px 60px;}
-  .como-funciona{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px;}
-  .cf-card{background:#fff;border:1px solid var(--surface-200);border-radius:14px;padding:18px 14px;text-align:center;}
-  .cf-num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;
-    background:var(--cor-primaria);color:#fff;font-family:var(--font-display);font-weight:800;font-size:14px;margin-bottom:10px;}
-  .cf-icon{font-size:22px;margin-bottom:6px;}
-  .cf-title{font-family:var(--font-display);font-weight:800;font-size:13.5px;margin-bottom:4px;}
-  .cf-desc{font-size:12px;color:var(--slate-600);line-height:1.4;}
-  @media(max-width:560px){.como-funciona{grid-template-columns:1fr;}}
+  .wrap{max-width:640px;margin:0 auto;padding:8px 18px 60px;}
+  .como-funciona{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:20px;}
+  .cf-card{background:#fff;border:1px solid var(--linha);border-radius:18px;padding:22px 16px;text-align:center;
+    box-shadow:var(--sombra-card);transition:transform .2s,box-shadow .2s;}
+  .cf-card:hover{transform:translateY(-3px);}
+  .cf-num{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;
+    color:#fff;font-family:var(--font);font-weight:800;font-size:14px;margin-bottom:12px;}
+  .cf-card:nth-child(1) .cf-num{background:var(--cor-primaria);}
+  .cf-card:nth-child(2) .cf-num{background:var(--cor-secundaria);}
+  .cf-card:nth-child(3) .cf-num{background:var(--cor-escura);}
+  .cf-icon{font-size:23px;margin-bottom:7px;}
+  .cf-title{font-family:var(--font);font-weight:700;font-size:13.5px;margin-bottom:5px;}
+  .cf-desc{font-size:12px;color:var(--tinta-suave);line-height:1.5;}
+  @media(max-width:600px){.como-funciona{grid-template-columns:1fr;}}
 
-  .trust-line{display:flex;align-items:center;justify-content:center;gap:8px;font-size:12.5px;color:var(--slate-600);
-    margin-bottom:18px;text-align:center;}
+  .trust-line{display:flex;align-items:center;justify-content:center;gap:14px;font-size:12.5px;color:var(--tinta-suave);
+    margin-bottom:22px;text-align:center;flex-wrap:wrap;font-weight:500;}
+  .trust-line span{color:var(--cor-primaria);font-weight:700;}
 
-  .panel{background:#fff;border:1px solid var(--surface-200);border-radius:16px;box-shadow:0 8px 24px rgba(22,35,47,0.07);
-    padding:22px;margin-bottom:18px;}
-  .panel h2{font-family:var(--font-display);font-weight:800;font-size:16px;margin:0 0 4px;}
-  .panel .sub{font-size:12.5px;color:var(--slate-600);margin:0 0 16px;}
+  .panel{background:#fff;border:1px solid var(--linha);border-radius:20px;box-shadow:var(--sombra-card);
+    padding:26px;margin-bottom:18px;position:relative;overflow:hidden;}
+  .panel::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;
+    background:linear-gradient(90deg, var(--cor-secundaria), var(--cor-primaria));}
+  .panel h2{font-family:var(--font);font-weight:800;font-size:17px;margin:0 0 4px;}
+  .panel .sub{font-size:12.5px;color:var(--tinta-suave);margin:0 0 18px;line-height:1.5;}
 
-  label{display:block;font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-    color:var(--slate-700);margin:14px 0 6px;}
+  label{display:block;font-family:var(--font);font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--tinta-suave);margin:16px 0 7px;}
   label:first-of-type{margin-top:0;}
-  label .opt{color:var(--slate-600);font-weight:600;text-transform:none;letter-spacing:0;}
-  input[type=text]{width:100%;border:1.5px solid var(--surface-200);border-radius:8px;padding:11px 14px;font-size:14px;color:var(--slate-950);}
-  input[type=text]:focus{outline:none;border-color:var(--cor-primaria);}
+  label .opt{color:var(--tinta-suave);font-weight:500;text-transform:none;letter-spacing:0;opacity:.8;}
+  input[type=text]{width:100%;border:1.5px solid var(--linha);border-radius:10px;padding:12px 14px;font-size:14px;
+    color:var(--tinta);font-family:var(--font);transition:border-color .15s,box-shadow .15s;}
+  input[type=text]:focus{outline:none;border-color:var(--cor-primaria);
+    box-shadow:0 0 0 3px color-mix(in srgb, var(--cor-primaria) 16%, transparent 84%);}
 
-  .btn-primary{width:100%;margin-top:18px;background:var(--cor-secundaria);color:#fff;border:none;border-radius:999px;
-    font-family:var(--font-body);font-weight:700;font-size:15px;padding:15px 20px;cursor:pointer;}
+  .btn-primary{width:100%;margin-top:20px;background:linear-gradient(120deg, var(--cor-secundaria), var(--cor-primaria));
+    color:#fff;border:none;border-radius:999px;font-family:var(--font);font-weight:700;font-size:15px;padding:16px 20px;
+    cursor:pointer;box-shadow:0 10px 24px color-mix(in srgb, var(--cor-primaria) 35%, transparent 65%);
+    transition:transform .15s,box-shadow .15s;}
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 30px color-mix(in srgb, var(--cor-primaria) 42%, transparent 58%);}
+  .btn-primary:active{transform:translateY(0);}
   .btn-whatsapp{width:100%;margin-top:10px;background:#25D366;color:#fff;border:none;border-radius:999px;
-    font-family:var(--font-body);font-weight:700;font-size:15px;padding:14px 20px;cursor:pointer;
-    display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;}
+    font-family:var(--font);font-weight:700;font-size:15px;padding:15px 20px;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;transition:filter .15s,transform .15s;}
+  .btn-whatsapp:hover{filter:brightness(1.06);transform:translateY(-1px);}
 
   .hidden{display:none !important;}
 
-  .link-box{background:var(--surface-100);border:1px solid var(--surface-200);border-radius:10px;padding:12px 14px;
-    font-family:var(--font-mono);font-size:12.5px;color:var(--cor-primaria);word-break:break-all;margin-bottom:6px;}
-  .icon-btn{border:1.5px solid var(--surface-200);background:#fff;border-radius:8px;font-family:var(--font-mono);font-size:11px;
-    font-weight:600;color:var(--slate-700);padding:8px 12px;cursor:pointer;margin-bottom:14px;}
+  .link-box{background:var(--cor-clara);border:1.5px dashed color-mix(in srgb, var(--cor-primaria) 38%, transparent 62%);
+    border-radius:12px;padding:14px 16px;font-family:var(--font);font-weight:600;font-size:13px;letter-spacing:.01em;
+    color:var(--cor-escura);word-break:break-all;margin-bottom:8px;}
+  .icon-btn{border:1.5px solid var(--linha);background:#fff;border-radius:10px;font-family:var(--font);font-size:12px;
+    font-weight:700;color:var(--tinta);padding:9px 14px;cursor:pointer;margin-bottom:14px;transition:border-color .15s,background .15s;}
+  .icon-btn:hover{border-color:var(--cor-primaria);background:var(--cor-clara);}
   .icon-btn.copied{background:var(--green);color:#fff;border-color:var(--green);}
 
-  .progress-label{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px;}
-  .progress-track{background:var(--surface-100);border-radius:999px;height:14px;overflow:hidden;}
-  .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg, var(--cor-secundaria), var(--cor-primaria));transition:width .4s;}
-  .tip{font-size:12px;color:var(--slate-600);margin-top:10px;line-height:1.5;}
+  .progress-label{display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:7px;}
+  .progress-track{background:var(--cor-clara);border-radius:999px;height:15px;overflow:hidden;box-shadow:inset 0 1px 2px rgba(20,10,8,0.07);}
+  .progress-fill{height:100%;border-radius:999px;background:linear-gradient(90deg, var(--cor-secundaria), var(--cor-primaria));transition:width .5s ease;}
+  .tip{font-size:12px;color:var(--tinta-suave);margin-top:12px;line-height:1.55;}
 
-  .reward-box{background:linear-gradient(135deg, var(--green), #167a54);color:#fff;border-radius:14px;padding:20px;margin-top:16px;text-align:center;}
-  .reward-box h3{font-family:var(--font-display);font-weight:800;margin:0 0 6px;}
-  .reward-box p{font-size:13.5px;opacity:.95;margin:0;}
+  .reward-box{background:linear-gradient(135deg, var(--cor-escura), color-mix(in srgb, var(--cor-escura) 72%, black 28%));
+    color:var(--cor-creme);border-radius:16px;padding:22px;margin-top:18px;text-align:center;
+    box-shadow:0 14px 30px color-mix(in srgb, var(--cor-escura) 45%, transparent 55%);}
+  .reward-box h3{font-family:var(--font);font-weight:800;margin:0 0 6px;font-size:16px;}
+  .reward-box p{font-size:13.5px;opacity:.95;margin:0;line-height:1.5;}
 
-  .footer{text-align:center;padding:24px 18px 40px;}
-  .footer .brand{font-family:var(--font-display);font-weight:800;color:rgba(22,35,47,0.4);letter-spacing:.06em;font-size:13px;}
+  .footer{text-align:center;padding:28px 18px 44px;}
+  .footer .brand{font-family:var(--font);font-weight:800;color:var(--tinta-suave);letter-spacing:.14em;font-size:12.5px;text-transform:uppercase;}
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <div class="eyebrow" id="eyebrowTxt">Programa de Indicação</div>
-  <h1 id="tituloTxt">Indique e Ganhe</h1>
-  <p id="descTxt">Carregando...</p>
-  <div class="premio-tag" id="premioTag"></div>
+  <svg class="hero-motif canto" viewBox="0 0 200 200" aria-hidden="true">
+    <circle cx="72" cy="104" r="46" fill="none" stroke="currentColor" stroke-width="11"/>
+    <circle cx="124" cy="82" r="34" fill="none" stroke="currentColor" stroke-width="11"/>
+  </svg>
+  <svg class="hero-motif fio" viewBox="0 0 300 120" aria-hidden="true">
+    <path d="M0,64 C34,16 64,112 96,64 C128,16 158,112 190,64 C222,16 252,112 284,64" fill="none" stroke="currentColor" stroke-width="7" stroke-linecap="round"/>
+  </svg>
+  <div class="hero-inner">
+    <div class="eyebrow" id="eyebrowTxt">Programa de Indicação</div>
+    <h1 id="tituloTxt">Indique e Ganhe</h1>
+    <p id="descTxt">Carregando...</p>
+    <div class="premio-tag" id="premioTag"></div>
+  </div>
+  <svg class="hero-wave" viewBox="0 0 1440 80" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0,32 C240,74 480,-10 720,32 C960,74 1200,-10 1440,32 L1440,80 L0,80 Z"/>
+  </svg>
 </div>
 
 <div class="wrap">
 
   <div class="como-funciona">
     <div class="cf-card">
+      <div class="cf-num">1</div>
       <div class="cf-icon">🔗</div>
-      <div class="cf-title">1. Gere seu link</div>
+      <div class="cf-title">Gere seu link</div>
       <div class="cf-desc">Cadastro rápido, sem custo nenhum.</div>
     </div>
     <div class="cf-card">
+      <div class="cf-num">2</div>
       <div class="cf-icon">📲</div>
-      <div class="cf-title">2. Compartilhe</div>
+      <div class="cf-title">Compartilhe</div>
       <div class="cf-desc">Manda pra quem você quiser, direto do WhatsApp.</div>
     </div>
     <div class="cf-card">
+      <div class="cf-num">3</div>
       <div class="cf-icon">🎁</div>
-      <div class="cf-title">3. Ganhe seu prêmio</div>
+      <div class="cf-title">Ganhe seu prêmio</div>
       <div class="cf-desc">Bateu a meta, a recompensa é sua.</div>
     </div>
   </div>
 
-  <div class="trust-line">✅ Sem custo · ✅ Sem compromisso · ✅ Só compartilhar</div>
+  <div class="trust-line"><span>✓</span> Sem custo &nbsp; <span>✓</span> Sem compromisso &nbsp; <span>✓</span> Só compartilhar</div>
 
   <div class="panel" id="painelCadastro">
     <h2>Comece agora</h2>

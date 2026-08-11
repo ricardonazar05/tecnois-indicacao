@@ -9,86 +9,115 @@
 <style>
   :root{
     --blue:#0787F0; --orange:#FA770B; --slate-950:#16232F; --slate-700:#3A4F63; --slate-600:#6B7A8D;
-    --surface-50:#F7FAFD; --surface-100:#EEF3F8; --surface-200:#DDE6EF; --green:#1F9D6B;
+    --surface-50:#F7FAFD; --surface-100:#EEF3F8; --surface-200:#DDE6EF; --green:#1F9D6B; --red:#DD4B39;
     --font-display:'Sora',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+    --sombra-suave:0 1px 2px rgba(22,35,47,0.04), 0 6px 20px rgba(22,35,47,0.06);
+    --sombra-hover:0 2px 4px rgba(22,35,47,0.05), 0 12px 28px rgba(22,35,47,0.09);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--surface-50);color:var(--slate-950);font-family:var(--font-body);}
   .hidden{display:none !important;}
 
-  .login-wrap{max-width:360px;margin:80px auto;padding:0 20px;}
-  .login-card{background:#fff;border:1px solid var(--surface-200);border-radius:16px;padding:30px;box-shadow:0 8px 24px rgba(22,35,47,0.08);}
+  /* ---- boot loader: evita o flash da tela de login enquanto a sessão salva é conferida ---- */
+  .boot-loader{position:fixed;inset:0;background:var(--surface-50);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .25s ease;}
+  .boot-loader.escondido{opacity:0;pointer-events:none;}
+  .spinner{width:32px;height:32px;border:3px solid var(--surface-200);border-top-color:var(--orange);border-radius:50%;animation:girar .7s linear infinite;}
+  @keyframes girar{to{transform:rotate(360deg);}}
+
+  .login-wrap{display:none;max-width:360px;margin:80px auto;padding:0 20px;}
+  .login-wrap.mostrar{display:block;}
+  .login-card{background:#fff;border:1px solid var(--surface-200);border-radius:18px;padding:32px;box-shadow:var(--sombra-suave);}
   .login-card h1{font-family:var(--font-display);font-weight:800;font-size:20px;margin:0 0 6px;}
-  .login-card p{font-size:13px;color:var(--slate-600);margin:0 0 18px;}
-  input[type=password], input[type=text], input[type=number]{width:100%;border:1.5px solid var(--surface-200);border-radius:8px;padding:11px 14px;font-size:14px;}
+  .login-card p{font-size:13px;color:var(--slate-600);margin:0 0 20px;line-height:1.5;}
+  input[type=password], input[type=text], input[type=number]{width:100%;border:1.5px solid var(--surface-200);border-radius:8px;
+    padding:11px 14px;font-size:14px;transition:border-color .15s;}
+  input[type=password]:focus, input[type=text]:focus, input[type=number]:focus{outline:none;border-color:var(--orange);}
   input[type=color]{width:56px;height:40px;border:1.5px solid var(--surface-200);border-radius:8px;padding:2px;cursor:pointer;}
-  .btn{background:var(--orange);color:#fff;border:none;border-radius:999px;font-weight:700;font-size:14px;padding:13px 18px;cursor:pointer;}
+  .btn{background:var(--orange);color:#fff;border:none;border-radius:999px;font-weight:700;font-size:14px;padding:13px 18px;
+    cursor:pointer;transition:filter .15s,transform .15s;}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn:disabled{opacity:.6;cursor:default;transform:none;}
   .btn.secundario{background:var(--blue);}
-  .erro-msg{color:#DD4B39;font-size:12.5px;margin-top:8px;}
+  .erro-msg{color:var(--red);font-size:12.5px;margin-top:10px;line-height:1.5;}
 
   .app{display:none;}
   .app.ativo{display:block;}
-  .topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+  .topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
   .topo h1{font-family:var(--font-display);font-weight:800;font-size:22px;margin:0;}
 
-  .lista-campanhas{display:grid;gap:12px;margin-bottom:26px;}
-  .campanha-card{background:#fff;border:1px solid var(--surface-200);border-radius:14px;padding:16px 18px;
-    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;}
-  .campanha-info{display:flex;align-items:center;gap:12px;}
-  .swatch{width:28px;height:28px;border-radius:8px;flex-shrink:0;}
+  .lista-campanhas{display:grid;gap:14px;margin-bottom:30px;}
+  .campanha-card{background:#fff;border:1px solid var(--surface-200);border-radius:16px;padding:18px 20px;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;
+    box-shadow:var(--sombra-suave);transition:box-shadow .2s,transform .2s;}
+  .campanha-card:hover{box-shadow:var(--sombra-hover);transform:translateY(-2px);}
+  .campanha-info{display:flex;align-items:center;gap:14px;}
+  .swatch{width:30px;height:30px;border-radius:9px;flex-shrink:0;}
   .campanha-nome{font-weight:700;font-size:14.5px;}
-  .campanha-meta{font-size:12px;color:var(--slate-600);}
-  .badge-inativa{font-size:10.5px;font-weight:700;color:#DD4B39;background:rgba(221,75,57,0.1);padding:3px 8px;border-radius:999px;margin-left:8px;}
+  .campanha-meta{font-size:12px;color:var(--slate-600);margin-top:2px;}
+  .badge-inativa{font-size:10.5px;font-weight:700;color:var(--red);background:rgba(221,75,57,0.1);padding:3px 8px;border-radius:999px;margin-left:8px;}
 
-  .form-panel{background:#fff;border:1px solid var(--surface-200);border-radius:16px;padding:24px;}
+  .skeleton{display:inline-block;background:linear-gradient(90deg, var(--surface-100) 25%, var(--surface-200) 37%, var(--surface-100) 63%);
+    background-size:400% 100%;animation:brilho 1.4s ease infinite;border-radius:6px;}
+  @keyframes brilho{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
+  .campanha-card.skeleton-card{box-shadow:none;}
+
+  .erro-carregamento{background:rgba(221,75,57,0.08);border:1px solid rgba(221,75,57,0.25);color:var(--red);
+    border-radius:12px;padding:14px 16px;font-size:13px;margin-bottom:18px;line-height:1.5;}
+
+  .form-panel{background:#fff;border:1px solid var(--surface-200);border-radius:18px;padding:28px;box-shadow:var(--sombra-suave);}
   .form-panel h2{font-family:var(--font-display);font-weight:800;font-size:17px;margin:0 0 18px;}
   label{display:block;font-family:var(--font-mono);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
-    color:var(--slate-700);margin:14px 0 6px;}
+    color:var(--slate-700);margin:16px 0 7px;}
   label:first-of-type{margin-top:0;}
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-  .cores-row{display:flex;gap:20px;align-items:center;}
+  .cores-row{display:flex;gap:22px;align-items:center;}
   .cor-grupo{display:flex;align-items:center;gap:8px;}
-  .checkbox-row{display:flex;align-items:center;gap:8px;margin-top:16px;}
-  .form-actions{display:flex;gap:10px;margin-top:22px;}
-  .status-msg{font-size:13px;margin-top:10px;}
+  .checkbox-row{display:flex;align-items:center;gap:8px;margin-top:18px;}
+  .form-actions{display:flex;gap:10px;margin-top:24px;}
+  .status-msg{font-size:13px;margin-top:12px;line-height:1.5;}
   .status-msg.ok{color:var(--green);}
-  .status-msg.erro{color:#DD4B39;}
+  .status-msg.erro{color:var(--red);}
 
-  .admin-nav{background:var(--slate-950);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .admin-nav{background:var(--slate-950);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   .admin-nav-brand{font-family:var(--font-display);font-weight:800;color:#fff;font-size:15px;}
   .admin-nav-links{display:flex;gap:8px;}
   .admin-nav-link{font-family:var(--font-mono);font-size:12px;font-weight:600;color:rgba(247,250,253,0.7);text-decoration:none;
-    padding:8px 14px;border-radius:8px;transition:background .15s,color .15s;}
-  .admin-nav-link:hover{background:rgba(255,255,255,0.08);color:#fff;}
+    padding:9px 15px;border-radius:8px;transition:background .15s,color .15s;}
+  .admin-nav-link:hover{background:rgba(255,255,255,0.1);color:#fff;}
   .admin-nav-link.ativo{background:var(--orange);color:#fff;}
 </style>
 </head>
 <body>
 
+<div class="boot-loader" id="bootLoader"><div class="spinner"></div></div>
+
 <div class="login-wrap" id="loginWrap">
   <div class="login-card">
     <h1>🔒 Configurar Campanhas</h1>
     <p>Digite a senha de administrador.</p>
-    <input type="password" id="senhaInput" placeholder="Senha">
-    <button class="btn" style="width:100%;margin-top:14px;" onclick="fazerLogin()">Entrar</button>
+    <input type="password" id="senhaInput" placeholder="Senha" onkeydown="if(event.key==='Enter') fazerLogin()">
+    <button class="btn" id="btnEntrar" style="width:100%;margin-top:14px;" onclick="fazerLogin()">Entrar</button>
     <div class="erro-msg" id="erroMsg"></div>
   </div>
 </div>
 
 <div class="app" id="app">
   <div class="admin-nav">
-    <div class="admin-nav-brand">⚙️ TecNois Admin</div>
+    <div class="admin-nav-brand">⚙️ Painel de Indicação</div>
     <div class="admin-nav-links">
       <a href="/admin.html" class="admin-nav-link">📊 Ranking</a>
       <a href="/admin-config.html" class="admin-nav-link ativo">⚙️ Configurar Campanhas</a>
     </div>
   </div>
 
-  <div style="max-width:900px;margin:0 auto;padding:30px 18px 60px;">
+  <div style="max-width:900px;margin:0 auto;padding:34px 20px 64px;">
   <div class="topo">
     <h1>⚙️ Configurar Campanhas</h1>
     <button class="btn secundario" onclick="novaCampanha()">+ Nova campanha</button>
   </div>
+
+  <div class="erro-carregamento hidden" id="erroCarregamento"></div>
 
   <div class="lista-campanhas" id="listaCampanhas"></div>
 
@@ -142,7 +171,7 @@
     </div>
 
     <div class="form-actions">
-      <button class="btn" onclick="salvarCampanha()">💾 Salvar</button>
+      <button class="btn" id="btnSalvar" onclick="salvarCampanha()">💾 Salvar</button>
       <button class="btn secundario" onclick="verPreview()">👁️ Ver página</button>
     </div>
     <div class="status-msg" id="statusMsg"></div>
@@ -155,30 +184,114 @@ let SENHA = null;
 let CAMPANHAS = [];
 let EDITANDO_SLUG = null;
 
-async function fazerLogin(){
-  const senha = document.getElementById('senhaInput').value;
-  document.getElementById('erroMsg').textContent = '';
+async function iniciar(){
+  const senhaSalva = sessionStorage.getItem('admin_senha');
+  if(senhaSalva){
+    document.getElementById('senhaInput').value = senhaSalva;
+    const ok = await tentarEntrar(senhaSalva, true);
+    if(!ok){
+      sessionStorage.removeItem('admin_senha');
+      mostrarLogin();
+    }
+  } else {
+    mostrarLogin();
+  }
+  document.getElementById('bootLoader').classList.add('escondido');
+}
+
+function mostrarLogin(){
+  document.getElementById('loginWrap').classList.add('mostrar');
+}
+
+async function tentarEntrar(senha, silencioso){
+  const erroEl = document.getElementById('erroMsg');
+  const btn = document.getElementById('btnEntrar');
+  if(!silencioso){
+    erroEl.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+  }
   try{
     const resp = await fetch('/api/admin-campanhas', { headers: { 'x-admin-key': senha } });
     if(resp.status === 401){
-      document.getElementById('erroMsg').textContent = 'Senha incorreta.';
-      return;
+      if(!silencioso) erroEl.textContent = 'Senha incorreta. Confira e tente de novo.';
+      return false;
+    }
+    if(!resp.ok){
+      if(!silencioso) erroEl.textContent = 'O servidor não respondeu como esperado (erro ' + resp.status + '). Tente novamente em instantes.';
+      return false;
     }
     SENHA = senha;
     sessionStorage.setItem('admin_senha', senha);
-    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('loginWrap').classList.remove('mostrar');
     document.getElementById('app').classList.add('ativo');
     carregarCampanhas();
+    return true;
   }catch(e){
-    document.getElementById('erroMsg').textContent = 'Erro de conexão: ' + e.message;
+    if(!silencioso) erroEl.textContent = 'Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.';
+    return false;
+  }finally{
+    if(!silencioso){
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  }
+}
+
+async function fazerLogin(){
+  const senha = document.getElementById('senhaInput').value;
+  if(!senha){
+    document.getElementById('erroMsg').textContent = 'Digite a senha.';
+    return;
+  }
+  await tentarEntrar(senha, false);
+}
+
+function mostrarCarregandoLista(){
+  document.getElementById('erroCarregamento').classList.add('hidden');
+  const container = document.getElementById('listaCampanhas');
+  container.innerHTML = '';
+  for(let i = 0; i < 3; i++){
+    const div = document.createElement('div');
+    div.className = 'campanha-card skeleton-card';
+    div.innerHTML = `
+      <div class="campanha-info">
+        <span class="skeleton" style="width:30px;height:30px;border-radius:9px;"></span>
+        <div>
+          <span class="skeleton" style="display:block;width:160px;height:14px;margin-bottom:8px;"></span>
+          <span class="skeleton" style="display:block;width:220px;height:11px;"></span>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
   }
 }
 
 async function carregarCampanhas(){
-  const resp = await fetch('/api/admin-campanhas', { headers: { 'x-admin-key': SENHA } });
-  const data = await resp.json();
-  CAMPANHAS = data.campanhas || [];
-  renderizarLista();
+  mostrarCarregandoLista();
+  const erroEl = document.getElementById('erroCarregamento');
+  try{
+    const resp = await fetch('/api/admin-campanhas', { headers: { 'x-admin-key': SENHA } });
+    if(resp.status === 401){
+      erroEl.textContent = 'Sua sessão expirou. Recarregue a página e faça login de novo.';
+      erroEl.classList.remove('hidden');
+      document.getElementById('listaCampanhas').innerHTML = '';
+      return;
+    }
+    if(!resp.ok){
+      erroEl.textContent = 'Não foi possível carregar as campanhas agora (erro ' + resp.status + '). Tente novamente em instantes.';
+      erroEl.classList.remove('hidden');
+      document.getElementById('listaCampanhas').innerHTML = '';
+      return;
+    }
+    const data = await resp.json();
+    CAMPANHAS = data.campanhas || [];
+    renderizarLista();
+  }catch(e){
+    erroEl.textContent = 'Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.';
+    erroEl.classList.remove('hidden');
+    document.getElementById('listaCampanhas').innerHTML = '';
+  }
 }
 
 function renderizarLista(){
@@ -244,10 +357,12 @@ async function salvarCampanha(){
   const slug = document.getElementById('fSlug').value.trim();
   const nome = document.getElementById('fNome').value.trim();
   const recompensa = document.getElementById('fRecompensa').value.trim();
+  const statusEl = document.getElementById('statusMsg');
+  const btn = document.getElementById('btnSalvar');
 
   if(!slug || !nome || !recompensa){
-    document.getElementById('statusMsg').textContent = 'Preencha slug, nome e recompensa.';
-    document.getElementById('statusMsg').className = 'status-msg erro';
+    statusEl.textContent = 'Preencha pelo menos slug, nome e recompensa antes de salvar.';
+    statusEl.className = 'status-msg erro';
     return;
   }
 
@@ -265,24 +380,39 @@ async function salvarCampanha(){
     ativo: document.getElementById('fAtivo').checked
   };
 
+  statusEl.textContent = '';
+  btn.disabled = true;
+  btn.textContent = 'Salvando...';
+
   try{
     const resp = await fetch('/api/admin-campanhas', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', 'x-admin-key': SENHA },
       body: JSON.stringify(payload)
     });
-    const data = await resp.json();
+
+    if(resp.status === 401){
+      statusEl.textContent = 'Sua sessão expirou. Recarregue a página e faça login de novo.';
+      statusEl.className = 'status-msg erro';
+      return;
+    }
+
+    const data = await resp.json().catch(() => ({}));
+
     if(resp.ok){
-      document.getElementById('statusMsg').textContent = '✅ Salvo com sucesso!';
-      document.getElementById('statusMsg').className = 'status-msg ok';
+      statusEl.textContent = '✅ Campanha salva com sucesso!';
+      statusEl.className = 'status-msg ok';
       await carregarCampanhas();
     } else {
-      document.getElementById('statusMsg').textContent = 'Erro: ' + (data.erro || 'desconhecido');
-      document.getElementById('statusMsg').className = 'status-msg erro';
+      statusEl.textContent = 'Não foi possível salvar: ' + (data.erro || ('o servidor respondeu com erro ' + resp.status + '.'));
+      statusEl.className = 'status-msg erro';
     }
   }catch(e){
-    document.getElementById('statusMsg').textContent = 'Erro de conexão: ' + e.message;
-    document.getElementById('statusMsg').className = 'status-msg erro';
+    statusEl.textContent = 'Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.';
+    statusEl.className = 'status-msg erro';
+  }finally{
+    btn.disabled = false;
+    btn.textContent = '💾 Salvar';
   }
 }
 
@@ -292,11 +422,7 @@ function verPreview(){
   window.open('/indicar.html?campanha=' + slug, '_blank');
 }
 
-const senhaSalva = sessionStorage.getItem('admin_senha');
-if(senhaSalva){
-  document.getElementById('senhaInput').value = senhaSalva;
-  fazerLogin();
-}
+iniciar();
 </script>
 </body>
 </html>

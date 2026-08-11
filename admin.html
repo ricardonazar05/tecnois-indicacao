@@ -9,73 +9,105 @@
 <style>
   :root{
     --blue:#0787F0; --orange:#FA770B; --slate-950:#16232F; --slate-700:#3A4F63; --slate-600:#6B7A8D;
-    --surface-50:#F7FAFD; --surface-100:#EEF3F8; --surface-200:#DDE6EF; --green:#1F9D6B;
+    --surface-50:#F7FAFD; --surface-100:#EEF3F8; --surface-200:#DDE6EF; --green:#1F9D6B; --red:#DD4B39;
     --font-display:'Sora',sans-serif; --font-body:'Inter',sans-serif; --font-mono:'JetBrains Mono',monospace;
+    --sombra-suave:0 1px 2px rgba(22,35,47,0.04), 0 6px 20px rgba(22,35,47,0.06);
+    --sombra-hover:0 2px 4px rgba(22,35,47,0.05), 0 12px 28px rgba(22,35,47,0.09);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;background:var(--surface-50);color:var(--slate-950);font-family:var(--font-body);}
 
-  .login-wrap{max-width:360px;margin:80px auto;padding:0 20px;}
-  .login-card{background:#fff;border:1px solid var(--surface-200);border-radius:16px;padding:30px;box-shadow:0 8px 24px rgba(22,35,47,0.08);}
+  /* ---- boot loader: evita o flash da tela de login enquanto a sessão salva é conferida ---- */
+  .boot-loader{position:fixed;inset:0;background:var(--surface-50);display:flex;align-items:center;justify-content:center;z-index:9999;transition:opacity .25s ease;}
+  .boot-loader.escondido{opacity:0;pointer-events:none;}
+  .spinner{width:32px;height:32px;border:3px solid var(--surface-200);border-top-color:var(--orange);border-radius:50%;animation:girar .7s linear infinite;}
+  @keyframes girar{to{transform:rotate(360deg);}}
+
+  .login-wrap{display:none;max-width:360px;margin:80px auto;padding:0 20px;}
+  .login-wrap.mostrar{display:block;}
+  .login-card{background:#fff;border:1px solid var(--surface-200);border-radius:18px;padding:32px;box-shadow:var(--sombra-suave);}
   .login-card h1{font-family:var(--font-display);font-weight:800;font-size:20px;margin:0 0 6px;}
-  .login-card p{font-size:13px;color:var(--slate-600);margin:0 0 18px;}
-  input[type=password]{width:100%;border:1.5px solid var(--surface-200);border-radius:8px;padding:12px 14px;font-size:14px;}
+  .login-card p{font-size:13px;color:var(--slate-600);margin:0 0 20px;line-height:1.5;}
+  input[type=password]{width:100%;border:1.5px solid var(--surface-200);border-radius:8px;padding:12px 14px;font-size:14px;transition:border-color .15s;}
+  input[type=password]:focus{outline:none;border-color:var(--orange);}
   .btn{width:100%;margin-top:14px;background:var(--orange);color:#fff;border:none;border-radius:999px;
-    font-weight:700;font-size:14px;padding:13px 18px;cursor:pointer;}
-  .erro-msg{color:#DD4B39;font-size:12.5px;margin-top:8px;}
+    font-weight:700;font-size:14px;padding:13px 18px;cursor:pointer;transition:filter .15s,transform .15s;}
+  .btn:hover{filter:brightness(1.08);transform:translateY(-1px);}
+  .btn:active{transform:translateY(0);}
+  .btn:disabled{opacity:.6;cursor:default;transform:none;}
+  .erro-msg{color:var(--red);font-size:12.5px;margin-top:10px;line-height:1.5;}
 
   .app{display:none;}
   .app.ativo{display:block;}
 
-  .admin-nav{background:var(--slate-950);padding:14px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .admin-nav{background:var(--slate-950);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
   .admin-nav-brand{font-family:var(--font-display);font-weight:800;color:#fff;font-size:15px;}
   .admin-nav-links{display:flex;gap:8px;}
   .admin-nav-link{font-family:var(--font-mono);font-size:12px;font-weight:600;color:rgba(247,250,253,0.7);text-decoration:none;
-    padding:8px 14px;border-radius:8px;transition:background .15s,color .15s;}
-  .admin-nav-link:hover{background:rgba(255,255,255,0.08);color:#fff;}
+    padding:9px 15px;border-radius:8px;transition:background .15s,color .15s;}
+  .admin-nav-link:hover{background:rgba(255,255,255,0.1);color:#fff;}
   .admin-nav-link.ativo{background:var(--orange);color:#fff;}
-  .app-content{max-width:1000px;margin:0 auto;padding:30px 18px 60px;}
-  .topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:10px;}
+  .app-content{max-width:1000px;margin:0 auto;padding:34px 20px 64px;}
+  .topo{display:flex;justify-content:space-between;align-items:center;margin-bottom:26px;flex-wrap:wrap;gap:12px;}
   .topo h1{font-family:var(--font-display);font-weight:800;font-size:22px;margin:0;}
-  select{border:1.5px solid var(--surface-200);border-radius:8px;padding:9px 12px;font-size:13px;font-family:var(--font-body);}
+  select{border:1.5px solid var(--surface-200);border-radius:8px;padding:10px 14px;font-size:13px;font-family:var(--font-body);
+    background:#fff;cursor:pointer;transition:border-color .15s;}
+  select:hover{border-color:var(--slate-600);}
+  select:focus{outline:none;border-color:var(--orange);}
 
-  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px;}
-  .stat-card{background:#fff;border:1px solid var(--surface-200);border-radius:12px;padding:16px;text-align:center;}
-  .stat-card .num{font-family:var(--font-display);font-weight:800;font-size:26px;color:var(--blue);}
-  .stat-card .label{font-family:var(--font-mono);font-size:10px;color:var(--slate-600);text-transform:uppercase;letter-spacing:.04em;margin-top:4px;}
+  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:24px;}
+  .stat-card{background:#fff;border:1px solid var(--surface-200);border-radius:14px;padding:20px 16px;text-align:center;
+    box-shadow:var(--sombra-suave);transition:box-shadow .2s,transform .2s;}
+  .stat-card:hover{box-shadow:var(--sombra-hover);transform:translateY(-2px);}
+  .stat-card .num{font-family:var(--font-display);font-weight:800;font-size:27px;color:var(--blue);}
+  .stat-card .label{font-family:var(--font-mono);font-size:10px;color:var(--slate-600);text-transform:uppercase;letter-spacing:.04em;margin-top:6px;}
   @media(max-width:600px){.stats-row{grid-template-columns:1fr;}}
 
-  table{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden;border:1px solid var(--surface-200);}
-  th{background:var(--surface-100);text-align:left;padding:12px 14px;font-family:var(--font-mono);font-size:10.5px;
+  .erro-carregamento{background:rgba(221,75,57,0.08);border:1px solid rgba(221,75,57,0.25);color:var(--red);
+    border-radius:12px;padding:14px 16px;font-size:13px;margin-bottom:18px;line-height:1.5;}
+
+  table{width:100%;border-collapse:collapse;background:#fff;border-radius:14px;overflow:hidden;border:1px solid var(--surface-200);
+    box-shadow:var(--sombra-suave);}
+  th{background:var(--surface-100);text-align:left;padding:13px 16px;font-family:var(--font-mono);font-size:10.5px;
     text-transform:uppercase;letter-spacing:.04em;color:var(--slate-700);}
-  td{padding:12px 14px;font-size:13.5px;border-top:1px solid var(--surface-100);}
+  td{padding:13px 16px;font-size:13.5px;border-top:1px solid var(--surface-100);}
+  tbody tr{transition:background .12s;}
+  tbody tr:hover{background:var(--surface-50);}
   tr.destaque td{background:rgba(31,157,107,0.06);}
+  tr.destaque:hover td{background:rgba(31,157,107,0.1);}
   .badge{display:inline-block;font-size:11px;font-weight:700;padding:3px 10px;border-radius:999px;}
   .badge.ok{background:rgba(31,157,107,0.15);color:var(--green);}
   .badge.pendente{background:var(--surface-100);color:var(--slate-600);}
   .badge.notificado{background:rgba(7,135,240,0.12);color:var(--blue);}
   .rank{font-family:var(--font-mono);font-weight:700;color:var(--slate-600);}
-  .sem-dados{text-align:center;padding:40px 20px;color:var(--slate-600);}
+  .sem-dados{text-align:center;padding:44px 20px;color:var(--slate-600);}
 
   .table-wrap{overflow-x:auto;}
   .hidden{display:none !important;}
+
+  /* ---- skeleton de carregamento ---- */
+  .skeleton{display:inline-block;background:linear-gradient(90deg, var(--surface-100) 25%, var(--surface-200) 37%, var(--surface-100) 63%);
+    background-size:400% 100%;animation:brilho 1.4s ease infinite;border-radius:6px;}
+  @keyframes brilho{0%{background-position:100% 50%;}100%{background-position:0 50%;}}
 </style>
 </head>
 <body>
+
+<div class="boot-loader" id="bootLoader"><div class="spinner"></div></div>
 
 <div class="login-wrap" id="loginWrap">
   <div class="login-card">
     <h1>🔒 Painel do Programa</h1>
     <p>Digite a senha de administrador pra ver o ranking de indicações.</p>
-    <input type="password" id="senhaInput" placeholder="Senha">
-    <button class="btn" onclick="fazerLogin()">Entrar</button>
+    <input type="password" id="senhaInput" placeholder="Senha" onkeydown="if(event.key==='Enter') fazerLogin()">
+    <button class="btn" id="btnEntrar" onclick="fazerLogin()">Entrar</button>
     <div class="erro-msg" id="erroMsg"></div>
   </div>
 </div>
 
 <div class="app" id="app">
   <div class="admin-nav">
-    <div class="admin-nav-brand">⚙️ TecNois Admin</div>
+    <div class="admin-nav-brand">⚙️ Painel de Indicação</div>
     <div class="admin-nav-links">
       <a href="/admin.html" class="admin-nav-link ativo">📊 Ranking</a>
       <a href="/admin-config.html" class="admin-nav-link">⚙️ Configurar Campanhas</a>
@@ -87,10 +119,10 @@
     <h1>📊 Ranking de Indicações</h1>
     <select id="filtroCampanha" onchange="carregarDados()">
       <option value="">Todas as campanhas</option>
-      <option value="tecnois">TecNois</option>
-      <option value="lacoque">Lacoque Mais Cachos</option>
     </select>
   </div>
+
+  <div class="erro-carregamento hidden" id="erroCarregamento"></div>
 
   <div class="stats-row">
     <div class="stat-card"><div class="num" id="totalParticipantes">0</div><div class="label">Participantes</div></div>
@@ -115,37 +147,131 @@
 <script>
 let SENHA = null;
 
-async function fazerLogin(){
-  const senha = document.getElementById('senhaInput').value;
-  document.getElementById('erroMsg').textContent = '';
+async function iniciar(){
+  const senhaSalva = sessionStorage.getItem('admin_senha');
+  if(senhaSalva){
+    document.getElementById('senhaInput').value = senhaSalva;
+    const ok = await tentarEntrar(senhaSalva, true);
+    if(!ok){
+      sessionStorage.removeItem('admin_senha');
+      mostrarLogin();
+    }
+  } else {
+    mostrarLogin();
+  }
+  document.getElementById('bootLoader').classList.add('escondido');
+}
 
+function mostrarLogin(){
+  document.getElementById('loginWrap').classList.add('mostrar');
+}
+
+async function tentarEntrar(senha, silencioso){
+  const erroEl = document.getElementById('erroMsg');
+  const btn = document.getElementById('btnEntrar');
+  if(!silencioso){
+    erroEl.textContent = '';
+    btn.disabled = true;
+    btn.textContent = 'Entrando...';
+  }
   try{
     const resp = await fetch('/api/admin-listar', { headers: { 'x-admin-key': senha } });
     if(resp.status === 401){
-      document.getElementById('erroMsg').textContent = 'Senha incorreta.';
-      return;
+      if(!silencioso) erroEl.textContent = 'Senha incorreta. Confira e tente de novo.';
+      return false;
+    }
+    if(!resp.ok){
+      if(!silencioso) erroEl.textContent = 'O servidor não respondeu como esperado (erro ' + resp.status + '). Tente novamente em instantes.';
+      return false;
     }
     SENHA = senha;
     sessionStorage.setItem('admin_senha', senha);
-    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('loginWrap').classList.remove('mostrar');
     document.getElementById('app').classList.add('ativo');
+    await carregarFiltroCampanhas();
     carregarDados();
+    return true;
   }catch(e){
-    document.getElementById('erroMsg').textContent = 'Erro de conexão: ' + e.message;
+    if(!silencioso) erroEl.textContent = 'Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.';
+    return false;
+  }finally{
+    if(!silencioso){
+      btn.disabled = false;
+      btn.textContent = 'Entrar';
+    }
+  }
+}
+
+async function fazerLogin(){
+  const senha = document.getElementById('senhaInput').value;
+  if(!senha){
+    document.getElementById('erroMsg').textContent = 'Digite a senha.';
+    return;
+  }
+  await tentarEntrar(senha, false);
+}
+
+async function carregarFiltroCampanhas(){
+  const select = document.getElementById('filtroCampanha');
+  try{
+    const resp = await fetch('/api/admin-campanhas', { headers: { 'x-admin-key': SENHA } });
+    if(!resp.ok) return;
+    const data = await resp.json();
+    const valorAtual = select.value;
+    (data.campanhas || []).forEach(c => {
+      const opt = document.createElement('option');
+      opt.value = c.slug;
+      opt.textContent = c.nome_exibicao;
+      select.appendChild(opt);
+    });
+    select.value = valorAtual;
+  }catch(e){
+    console.error('Erro ao carregar campanhas do filtro', e);
+  }
+}
+
+function mostrarCarregando(){
+  document.getElementById('erroCarregamento').classList.add('hidden');
+  document.getElementById('semDados').classList.add('hidden');
+  ['totalParticipantes','totalIndicacoes','totalGanhadores'].forEach(id => {
+    document.getElementById(id).innerHTML = '<span class="skeleton" style="width:32px;height:22px;"></span>';
+  });
+  const tbody = document.getElementById('tabelaBody');
+  tbody.innerHTML = '';
+  for(let i = 0; i < 4; i++){
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td colspan="6"><span class="skeleton" style="width:100%;height:15px;"></span></td>';
+    tbody.appendChild(tr);
   }
 }
 
 async function carregarDados(){
+  mostrarCarregando();
   const campanha = document.getElementById('filtroCampanha').value;
   const url = '/api/admin-listar' + (campanha ? '?campanha=' + campanha : '');
+  const erroEl = document.getElementById('erroCarregamento');
 
-  const resp = await fetch(url, { headers: { 'x-admin-key': SENHA } });
-  if(!resp.ok){
-    alert('Sessão expirada ou senha inválida. Recarregue a página.');
-    return;
+  try{
+    const resp = await fetch(url, { headers: { 'x-admin-key': SENHA } });
+    if(resp.status === 401){
+      erroEl.textContent = 'Sua sessão expirou. Recarregue a página e faça login de novo.';
+      erroEl.classList.remove('hidden');
+      document.getElementById('tabelaBody').innerHTML = '';
+      return;
+    }
+    if(!resp.ok){
+      erroEl.textContent = 'Não foi possível carregar os dados agora (erro ' + resp.status + '). Tente novamente em instantes.';
+      erroEl.classList.remove('hidden');
+      document.getElementById('tabelaBody').innerHTML = '';
+      return;
+    }
+    const data = await resp.json();
+    renderizar(data.participantes || []);
+  }catch(e){
+    erroEl.textContent = 'Não foi possível conectar ao servidor. Verifique sua internet e tente de novo.';
+    erroEl.classList.remove('hidden');
+    document.getElementById('tabelaBody').innerHTML = '';
   }
-  const data = await resp.json();
-  renderizar(data.participantes || []);
 }
 
 function renderizar(lista){
@@ -182,12 +308,7 @@ function renderizar(lista){
   });
 }
 
-// se já logou antes nessa sessão do navegador, entra direto
-const senhaSalva = sessionStorage.getItem('admin_senha');
-if(senhaSalva){
-  document.getElementById('senhaInput').value = senhaSalva;
-  fazerLogin();
-}
+iniciar();
 </script>
 </body>
 </html>
